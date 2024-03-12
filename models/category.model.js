@@ -12,7 +12,7 @@ const categorySchema =  new mongoose.Schema({
         required: true
     }
 
-}, {timestamps: true, versionKey: false})
+}, {timeStamps: true, versionKey: false})
 
 // timestamp -> helps to get the time of created and updation
 // versionkey ->  removes __v from the schema

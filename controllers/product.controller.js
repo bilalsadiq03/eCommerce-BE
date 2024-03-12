@@ -29,9 +29,9 @@ exports.createNewproduct = async (req, res) => {
 
 // Get a list of products
 exports.fetchAllProducts = async (req, res) => {
-
+    const productName = req.query.name || '';
     try {
-        const products = await product_model.find({name: req.body.name})
+        const products = await product_model.find({name: productName})
         res.status(201).send(products)
     } catch (error) {
         console.log("Error getting all products ", error);
