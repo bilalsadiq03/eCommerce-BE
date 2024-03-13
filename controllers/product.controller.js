@@ -1,4 +1,4 @@
-const product_model = require("../models/product.model");
+const product_model = require("../models/product.model.js");
 
 // Create a new Product
 exports.createNewproduct = async (req, res) => {
@@ -8,13 +8,17 @@ exports.createNewproduct = async (req, res) => {
         name: req.body.name,
         description: req.body.description,
         price: req.body.price,
-        productImage: req.body.productImage
+        productImage: req.body.productImage,
+        stock: req.body.stock,
+        category: req.body.category
     }
 
     // Insert into MongoDB
     try {
         const product = await product_model.create(ProductData);
-        res.status(201).send(product)
+        res.status(201).send(product);
+        
+        
     } catch (error) {
         console.log("Error while creating  a new Product", error);
         return res.status(500).send({
@@ -29,9 +33,9 @@ exports.createNewproduct = async (req, res) => {
 
 // Get a list of products
 exports.fetchAllProducts = async (req, res) => {
-    const productName = req.query.name || '';
+    
     try {
-        const products = await product_model.find({name: productName})
+        const products = await product_model.find()
         res.status(201).send(products)
     } catch (error) {
         console.log("Error getting all products ", error);
@@ -50,7 +54,7 @@ exports.fetchProductWithId = async (req, res) => {
     const productId = req.body.id;
     
     try {
-        const product = await product_model.findOne({id: productId})
+        const product = await product_model.find({productId});
         res.status(201).send(product)
     } catch (error) {
         console.log("Error geting the Product", error)

@@ -1,3 +1,0 @@
-To Create an API:
-Step1: write logic in controller for that API
-Step2: Make a route for that API. 

@@ -31,7 +31,6 @@ async function init(){
 
         if (user) {
             console.log('Admin is already Present.!')
-        
             return
     }
         
