@@ -74,7 +74,7 @@ exports.signin = async (req, res)=>{
 
     // Using JWT w will create a token with a given TTl and return it
     const token = jwt.sign({id : user.userId}, secret.secret, {
-        expiresIn: 120
+        expiresIn: 1200
     })
     res.status(200).send({
         name: user.name,

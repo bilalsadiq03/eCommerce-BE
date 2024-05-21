@@ -11,10 +11,14 @@ module.exports = (app)=>{
     app.get("/ecomm/api/v1/auth/product/all",  product_controller.fetchAllProducts);
 
     // GET request to fetch a product based on id
-    app.get("/ecomm/api/v1/auth/product/id", product_controller.fetchProductWithId);
+    app.get("/ecomm/api/v1/auth/product/:id",[auth_mw.verifyToken, auth_mw.isAdmin] ,product_controller.fetchProductWithId);
  
 
-    //
+    // POST request to update a product based on id
+    app.post("/ecomm/api/v1/auth/product/update", [auth_mw.verifyToken, auth_mw.isAdmin], product_controller.updateProduct )
+
+
+    // GET request to fetch products under a category
 
 
 

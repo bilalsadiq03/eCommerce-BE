@@ -54,7 +54,7 @@ exports.fetchProductWithId = async (req, res) => {
     const productId = req.body.id;
     
     try {
-        const product = await product_model.find({productId});
+        const product = await product_model.findById(productId);
         res.status(201).send(product)
     } catch (error) {
         console.log("Error geting the Product", error)
@@ -67,7 +67,29 @@ exports.fetchProductWithId = async (req, res) => {
 
 
 // Update an existing Product
-exports.updateProduct = (req, res) => {
+exports.updateProduct = async (req, res) => {
+
+    const productData = {
+        id: req.body.id,
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        productImage: req.body.productImage,
+        stock: req.body.stock,
+        category: req.body.category
+    }
+    try {
+        const product = await product_model.findByIdAndUpdate(req.body.id, { ...productData}, {new: true});
+        res.status(201).send(product);
+    } catch (err) {
+        console.log("Error while Updating the product details:" ,err);
+        return res.status(404).send({
+            message: "Error updating  the Product details."
+        })
+    }
+    
+
+
 
 }
 
@@ -91,4 +113,4 @@ exports.deleteProduct = async (req, res) => {
 
 
 
-// Get a list og products under a category
+// TODO:  Get a list og products under a category
