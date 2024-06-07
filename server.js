@@ -2,7 +2,7 @@
 // Created Admin User at 1:20:00
 const express = require("express")
 const mongoose = require("mongoose")
-
+const cors = require('cors')
 const app = express()
 const server_config = require("./configs/server.config.js")
 const db_config = require("./configs/db.config.js")
@@ -21,41 +21,42 @@ db.on("error", ()=>{
 })
 db.once("open", ()=>{
     console.log("Successfully connected to MOngoDB...")
-    init()
+    // init()
 })
 
 
-async function init(){
-    try {
-        let user = await user_model.findOne({userId: "admin"})
+// async function init(){
+//     try {
+//         let user = await user_model.findOne({userId: "admin"})
 
-        if (user) {
-            console.log('Admin is already Present.!')
-            return
-    }
+//         if (user) {
+//             console.log('Admin is already Present.!')
+//             return
+//     }
         
-    } catch (error) {
-        console.log("Error while reading the data", error)
-    }
+//     } catch (error) {
+//         console.log("Error while reading the data", error)
+//     }
 
     
 
-    try {
-       user = await user_model.create({
-        name : "Bilal",
-        userId: "admin",
-        email: 'bnaq860@gamil.com',
-        userType: "ADMIN",
-        password: bcrypt.hashSync("Welcome1",8)
-       }) 
-       console.log("Admin created...", user)
+//     try {
+//        user = await user_model.create({
+//         name : "Bilal",
+//         userId: "admin",
+//         email: 'bnaq860@gamil.com',
+//         userType: "ADMIN",
+//         password: bcrypt.hashSync("Welcome1",8)
+//        }) 
+//        console.log("Admin created...", user)
 
-    } catch (error) {
-        console.log('Error: ',error)
-    }
-}
+//     } catch (error) {
+//         console.log('Error: ',error)
+//     }
+// }
 
 // Sticth the route to the server
+
 require("./routes/auth.route.js")(app)
 require("./routes/category.route.js")(app)
 require("./routes/product.route.js")(app)

@@ -8,9 +8,8 @@ const secret = require("../configs/auth.config")
 
 // Function for creating user / signingUp
 exports.signup = async (req, res)=>{
-    /**
-     * Logic to create the user
-     */
+    //Logic to create the user
+     
 
     //1. Read the request body
     const request_body = req.body
@@ -20,16 +19,15 @@ exports.signup = async (req, res)=>{
         name : request_body.name,
         userId : request_body.userId,
         email : request_body.email,
-        userType : request_body.userType,
         password : bcrypt.hashSync(request_body.password,8)
     }
 
     try{
 
         const user_created = await user_model.create(userObj)
-        /**
-         * Return this user
-         */
+        
+        //Return this user
+         
 
         const res_obj = {
             name : user_created.name,
@@ -84,4 +82,80 @@ exports.signin = async (req, res)=>{
         accessToken:token
     })
 
+}
+
+exports.logout = async (req, res) => {
+    res.cookie("jwt", "", {
+        httyOnly: true,
+        expires: new Date(0),
+      });
+    
+      res.status(200).send({ message: "Logged out successfully" });
+}
+
+exports.updateProfile = async (req, res) => {
+    const user = await user_model.findById(req.user._id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+      user.password = hashedPassword;
+    }
+
+    const updatedUser = await user_model.save();
+
+    res.send({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+}
+
+exports.getAllUsers = async(req, res) => {
+    try {
+        const users = await user_model.find()
+        res.status(201).send(users)
+    } catch (error) {
+        console.log("Error Fetching Users ", error);
+        return res.status(404).send({
+            message: "Error fetching users"
+        });
+    }
+}
+
+exports.deleteUserById = async (req, res) => {
+    try {
+        const user = await user_model.deleteOne( {id : req.body.id} )  
+        res.send(user); 
+    } catch (error) {
+        console.log("Error deleting the User", error);
+        return res.status(404).send({
+            message: "Error deleting the User"
+        })
+    }
+}
+
+exports.updateUserById =async (req, res) => {
+    const userData = {
+        name: req.body.name,
+        email: req.body.email
+    }
+    try {
+        const user = await user_model.findByIdAndUpdate(req.body.id, { ...userData}, {new: true});
+        res.status(201).send(user);
+    } catch (err) {
+        console.log("Error while Updating the user:" ,err);
+        return res.status(404).send({
+            message: "Error updating  the user details."
+        })
+    }
 }

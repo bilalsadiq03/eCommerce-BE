@@ -1,6 +1,18 @@
 const order_model = require('../models/order.model.js')
 const product_model = require('../models/product.model.js')
 
+// Functions to be made 
+// createOrder   ✔
+// getAllOrders  ✔
+// getUserOrders  ✔
+// countTotalOrders  ✔
+// calculateTotalSales ✔
+// markOrderAsPaid,
+// markOrderAsDelivered,
+//
+
+
+
 // const  reduceStock = async (orderItems) => {
 //     for (let i = 0; i < orderItems.length; i++) {
 //         const order = orderItems[i];
@@ -72,7 +84,7 @@ exports.createNewOrder = async (req, res) => {
     } catch (error) {
         return res.status(500).send({
             success: false,
-            message: "Error while placing the order!"
+            message: error.message
         })
     }
 
@@ -94,13 +106,77 @@ exports.getAllOrders = async (req, res) => {
 }
 
 
-// TODO : Fixing this after Porject completion
+
 exports.getUserOrders = async (req, res) =>{
-  const user_id = req.body.id;
+  // const user_id = req.body.id;
   try {
-    const orders = await order_model.findById({});
-    res.json(orders);
+    const orders = await order_model.find({user: req.body.id});
+    res.send(orders);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ 
+      error: error.message 
+    });
+  }
+}
+
+
+exports.countTotalorders = async (req, res) => {
+  try {
+    const totalOrders = await order_model.countDocuments();
+    res.status(200).send({ totalOrders });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
+
+exports.calculateTotalSales = async (req, res) => {
+  try {
+    const orders = await order_model.find();
+    const totalSales = orders.reduce((sum, order) => sum + order.total, 0);
+    res.send({ totalSales });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
+
+
+exports.getOrderById =  async (req, res) => {
+  const orderId = req.body.id;
+    
+    try {
+        const order = await order_model.findById(orderId);
+        res.status(201).send(order)
+    } catch (error) {
+        console.log("Error geting the Order", error)
+        return res.status(404).send({
+            message: "Error fetching the Order"
+        })
+    }
+}
+
+
+exports.markOrderAsPaid = async (req, res) => {
+  try {
+    const order = await order_model.findById(req.params.id);
+
+    if (order) {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+      order.paymentResult = {
+        id: req.body.id,
+        status: req.body.status,
+        update_time: req.body.update_time,
+        email_address: req.body.payer.email_address,
+      };
+
+      const updateOrder = await order_model.save();
+      res.status(200).send(updateOrder);
+    } else {
+      res.status(404).send({
+        message: "Order not found!"
+      })
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 }

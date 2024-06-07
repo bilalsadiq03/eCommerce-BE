@@ -54,7 +54,7 @@ const verifySignInBody = async(req, res, next) => {
 
     if(!req.body.userId) {
         return res.status(400).send({
-            message: "User Id not provided!"
+            message: "User Id is not provided!"
         })
     }
 
@@ -110,7 +110,7 @@ const isAdmin = (req, res, next)=>{
         next()
     } else {
         return res.status(403).send({
-            message: "Only ADMIN users are allowed to create category"
+            message: "Only ADMIN users are allowed.!"
         })
     }
 }
